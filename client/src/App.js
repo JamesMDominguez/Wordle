@@ -7,37 +7,48 @@ function App() {
   const [Word,setWord] = useState(0)
   const [WordLetter,setWordLetter] = useState(0) 
   const [submited,setSubmited] = useState(false) 
-  const values = {submited,Word}
+  const contex = {submited,Word}
   const [Words,setWords] = useState([ ["","","","",""],
                                       ["","","","",""],
                                       ["","","","",""],
                                       ["","","","",""],
                                       ["","","","",""],
-                                      ["","","","",""]]) 
+                                      ["","","","",""]])                                     
   const abc = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "←", "k", "l", "m", "n", "o", "p", "q", "r", "s", "Enter" ,"t", "u", "v", "w", "x", "y", "z","j"]
+  function backspace(){
+    setWords((prev)=>{  //updates "Words" matrix to delete the last letter from input
+      prev[Word][WordLetter-1] = ""
+      return prev
+    })
+    setWordLetter((prev)=> prev - 1) //update current pos of word letter
+  }
+
+  function enterLetter(letter){
+    setWordLetter((prev)=>prev+1)  //update current pos of word letter
+    setWords((prev)=>{  //updates "Words" matrix to add new letter from keyboard
+      prev[Word][WordLetter] = letter
+      return prev
+    })
+  }
+
+  function enterWord(){
+    setWord((prev)=>prev+1) //updates pos word for a new guess
+    setWordLetter(0) //moves letter pos to beginning 
+    setSubmited(true) //reveals colors in row 
+  }
 
   function keyBoard(){
     return abc.map((Letter)=>{
       return(
-        <div className="GridBox" onClick={()=>{
+        <div className="GridBox" key={Letter} onClick={()=>{
           if(Letter === "←"){
-            setWords((prev)=>{
-              prev[Word][WordLetter-1] = ""
-              return prev
-            })
-            setWordLetter((prev)=> prev - 1)
+            backspace()
           }    
           else if(WordLetter<5 && Letter != "Enter"){ 
-            setWordLetter((prev)=>prev+1)
-            setWords((prev)=>{
-              prev[Word][WordLetter] = Letter
-              return prev
-            })
+            enterLetter(Letter)
           }
           else if(Letter === "Enter" && WordLetter === 5){
-            setWord((prev)=>prev+1)
-            setWordLetter(0)
-            setSubmited(true)
+            enterWord()
           }
         }}>
         <p style={{margin:"auto"}}>{Letter}</p>
@@ -48,8 +59,8 @@ function App() {
 
 
   return (
-    <UserContext.Provider value={values}>
-    <div className="App">
+    <UserContext.Provider value={contex}> {/* gives Gridbox contex on the current row and submission status */}
+    <div className="App"> 
       <header>
         <h1 style={{textAlign:"center",fontSize:"80px",margin:"5px"}}>Wordle</h1>
       <div className="GridRow">

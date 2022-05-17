@@ -5,7 +5,7 @@ import "./Grid.css";
 function Grid(props) {
   const GridWords = props.words
   return GridWords.map((word,index) => {
-    return <GridRow word={word} row={index}/>
+    return <GridRow key={index} word={word} row={index}/>
   });
 }
 
